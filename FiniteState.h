@@ -19,14 +19,19 @@
 
 #include "Arduino.h"
 
-#define MAX 32    // Numero massimo di condizioni
+#define MAX 32    // Max conditions
+
+// Null state (start), do nothing
+#define HALT -1
+// Default condition (ELSE)
+#define ELSE -1
+// Null condition returned from Next to signal end of conditions
+#define BREAK -2
+// No actions
+#define NONE -1
 
 class FiniteState {
 public:
-  const int HALT = -1; 
-  const int ELSE = -1;
-  const int NONE = -1; 
-  const int BREAK = -9999;
   int State;
 
   FiniteState();
@@ -53,4 +58,3 @@ private:
 };
 
 #endif
-

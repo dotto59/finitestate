@@ -18,23 +18,14 @@
 #include "FiniteState.h"
 
 // ------------------------------------------------
-// INIZIALIZZAZIONI
+// INIT
 // ------------------------------------------------
-// Stato nullo (iniziale)
-const int HALT = -1;    
-// Condizione sempre verificata (ELSE)
-const int ELSE = -1;    
-// Condizione nulla restituita da Next per indicare fine condizioni
-const int BREAK = -2;
-// Nessuna azione
-const int NONE = -1;
-
 int Max;
-int id;         // Condizione corrente
-int State;    // Stato corrente
+int id;    // Current condition
+int State; // Current state
 
 // ------------------------------------------------
-// METODI
+// METHODS
 // ------------------------------------------------
 FiniteState::FiniteState() {
   Reset();
@@ -42,11 +33,11 @@ FiniteState::FiniteState() {
 
 void FiniteState::Reset() {
   id = -1;
-  // Crea il primo record "nullo"
+  // Create first "null" record
   Write(HALT,ELSE,NONE,0,HALT);
   id = -1;
   Max = -1;
-  // Si posiziona nello stato "nullo"
+  // Set current state to HALT
   Set(HALT);
 }  
 void FiniteState::Write(int idState, int idCond, int idAction, int idParam, int idNext) {
@@ -59,9 +50,8 @@ void FiniteState::Write(int idState, int idCond, int idAction, int idParam, int 
     if (id > Max) Max = id;
 }
 
-// Cerca la prossima condizione nell'array per
-// lo stato corrente. Restituisce BREAK se non ci sono
-// altre condizioni da verificare
+// Search next current state condition. 
+// Returns BREAK if no more conditions are found
 int FiniteState::Next() {
   for (int i=++id; i<=Max; ++i)
     if ( _CurState[i] == State ) {
@@ -72,7 +62,7 @@ int FiniteState::Next() {
   return BREAK;
 }
 
-// Imposta il prossimo stato
+// Sets current state
 void FiniteState::Set(int newState) {
   State = HALT;
   for(id=0; id<=Max; ++id)
@@ -82,33 +72,39 @@ void FiniteState::Set(int newState) {
   id = -1;
 }
 
-// Imposta il prossimo stato indicato dall'attuale NextState
+// Sets next state
 void FiniteState::SetNext() {
   Set(NextState());
 }
 
+// Returns current state condition
 int FiniteState::Condition() {
   if ( id > -1 )
       return _Condition[id];
   else
       return BREAK;
 }
+
+// Returns current state action
 int FiniteState::Action() {
   if ( id > -1 )
       return _Action[id];
   else
       return NONE;
 }
+
+// Returns current state interger parameter
 int FiniteState::Param() {
   if ( id > -1 )
       return _Param[id];
   else
       return 0;
 }
+
+// Returns the next state for current condition
 int FiniteState::NextState() {
   if ( id > -1 )
       return _NextState[id];
   else
       return HALT;
 }
-
