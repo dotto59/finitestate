@@ -6,7 +6,8 @@ This library enables you to implement Finite State Machines (FSM) on Arduino boa
 1) Navigate to the Releases page.
 2) Download the latest release.
 3) Extract the zip file
-4) Move the "FiniteState" folder that has been extracted to your libraries directory.
+4) Move the "finitestate-master" folder that has been extracted to your libraries directory
+5) Rename the folder to "FiniteState"
 ## Usage
 Check examples FSMBlink and FSMTest.
 ## Contributing
