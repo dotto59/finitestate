@@ -35,7 +35,7 @@ After creating a global variable for the finite state machine, "``FiniteState fs
   // Set the machine to first state
   fsm.Set(S_START);
 ```
-With the first statement we define a transition from START state to LED state, based on a TIMER of 1000 ms. Obviously, the second represents the opposite transition, from state LED back to START after another second. The third one is the reference to local functions we'll see nect. The last statement sets the starting state to START.
+With the first statement we define a transition from START state to LED state, based on a TIMER of 1000 ms. Obviously, the second represents the opposite transition, from state LED back to START after another second. The third one is the reference to local functions we'll see next. The last statement sets the starting state to START.
 As you can see, Write() has 5 parameters:
 1) Current state code
 2) Condition required to change state
