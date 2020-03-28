@@ -31,7 +31,16 @@ After creating a global variable for the finite state machine, "``FiniteState fs
   fsm.Set(S_START);
 ```
 With the first statement we define a transition from START state to LED state, based on a TIMER of 1000 ms. Obviouslt, the second represents the opposite transition, from state LED back to START after another second. The last statement sets the starting state to START.
-After this initialization, you need to create two functions: one to check the conditions or "TestConditions()", and one to perform the required actions, or "DoActions". The first should return a boolean value representing the test result: true if the condition is met and the action will be performed, false if not.
+As you can see, Write() has 5 parameters:
+1) Current state code
+2) Condition required to change state
+3) Action required if Condition is met
+4) Optional integer parameter (if not used, simply put a zero)
+5) Next state at the end of action
+
+After this initialization, you need to create two functions: one to check the conditions or "TestConditions()", and one to perform the required actions, called "DoActions". 
+The function "TestConditions()" should return a boolean value representing the test result: true if the condition is met and the action will be performed, false if not. The condition to be tested is returned by the "fsm.Condition()" function, so you just need to implement a "swithc..case" with all the condition symbols you have defined before.
+inside the function "DoActions" you just need to check the required action, returned by the "fsm.Action()" function, and then use it in another "switch..case" block with all the action symbols defined.
 In our example, the code will be as follows:
 ```
 boolean TestCondition() {
@@ -70,17 +79,22 @@ Finally, you loop() cycle will be pretty simple and identical for almost any pro
 ```
 void loop() {
   // State execution cycle
-  if ( TestCondition() ) {
-    // Execute required action
-    DoAction();
-    // Step to next state
-    fsm.SetNext();
-    Serial.print("STATE: ");
-    Serial.println(fsm.State);
+  while ( fsm.State != HALT && fsm.Next() != BREAK ) {
+    // Check if a condition is met
+    if ( TestCondition() ) {
+      // Execute required action
+      DoAction();
+      // Step to next state
+      fsm.SetNext();
+      Serial.print("STATE: ");
+      Serial.println(fsm.State);
+      // Exit while
+      break;
+    }
   }
 }
 ```
-The first if() checks the conditions 
+The "while" cycles all the conditions of the current state, then the first if() checks the condition and of satisfied executes the corresponding action.
 
 ## Contributing
 If you want to contribute to this project:
