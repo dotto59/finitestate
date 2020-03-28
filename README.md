@@ -1,7 +1,7 @@
 # FiniteState
 FiniteState machine for Arduino
 ## Definition
-This library enables you to implement Finite State Machines (FSM) on Arduino boards.
+This library lets you easily implement Finite State Machines (FSM) over Arduino boards.
 ## Installation
 1) Navigate to the Releases page.
 2) Download the latest release.
@@ -9,8 +9,10 @@ This library enables you to implement Finite State Machines (FSM) on Arduino boa
 4) Move the "finitestate-master" folder that has been extracted to your libraries directory
 5) Rename the folder to "FiniteState"
 ## Usage
-firstly, you need to draw your **state diagram** using circles for the states, and arcs representing the "transitions". Each transition is a combination of three items: a "**condition**" (any event or test result) an "**action**" (what to do when the event happens) and the "**next state**" (the new state after the action is done). One of the states will be the "starting" state.
-Then, you need just a few coding. First of all, you must define all the symbols for States, Conditions, and Actions. I suggested you to start names with "S_" for States, Conditions with "C_" and Actions with "A_", and assign then some integer values (e.g. a sequence startig from 1).
+First, draw your **state diagram** using circles for the states, and arcs representing the "transitions". Each transition is a combination of three items: a "**condition**" (any event or test result) an "**action**" (what to do when the event happens) and the "**next state**" (the new state after the action is done). One of the states will be the "starting" state. Don't start working without a complete and logically tested state diagram, as a good chart makes the implementation pretty straightforward instead of trial-and-error method.
+
+You now need just a few coding! First of all, you must define all the symbols for States, Conditions, and Actions. I suggest you to start names with "S_" for States, Conditions with "C_" and Actions with "A_", and assign then some integer values (a sequence starting from 1).
+
 For example, let's assume you want to create a simple machine with just two states to blink a LED, like in FSMBlink example project. The starting state is called START, then the condition will be a timer fired (e.g. 1 second) and the actions are turn the LED on or off:
 ```
 // State
