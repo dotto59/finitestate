@@ -32,24 +32,22 @@
 
 class FiniteState {
 public:
-  int State;
-
   FiniteState();
   void Reset();
   void Write(int idState, int idCond, int idAction, int idParam, int idNext);
   void SetFunctions(bool (*condCheck)(int), void (*doAction)(int));
+  int State();
   int Next();
   void Set(int newState);
   void SetNext();
-  void Execute();
-  
-  int Write();
+  int Condition();
   int Action();
   int Param();
   int NextState();
-  int Condition();
+  void Execute();
   
 private:
+  int _State;
   int _CurState[MAX_COND];
   int _Condition[MAX_COND];
   int _Action[MAX_COND];

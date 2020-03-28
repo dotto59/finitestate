@@ -17,12 +17,7 @@
 #include "Arduino.h"
 #include "FiniteState.h"
 
-// ------------------------------------------------
-// INIT
-// ------------------------------------------------
-int Max;
-int id;    // Current condition
-int State; // Current state
+int _State;
 
 // ------------------------------------------------
 // METHODS
@@ -46,6 +41,9 @@ void FiniteState::SetFunctions(bool (*condCheck)(int), void (*doAction)(int)) {
   _DoAction = doAction;
 }
 
+int State() {
+  return _State;
+}
 void FiniteState::Write(int idState, int idCond, int idAction, int idParam, int idNext) {
     ++id;
     _CurState[id] = idState;
@@ -60,7 +58,7 @@ void FiniteState::Write(int idState, int idCond, int idAction, int idParam, int 
 // Returns C_BREAK if no more conditions are found
 int FiniteState::Next() {
   for (int i=++id; i<=Max; ++i)
-    if ( _CurState[i] == State ) {
+    if ( _CurState[i] == _State ) {
       id = i;
       return _Condition[i];
     }
@@ -70,10 +68,10 @@ int FiniteState::Next() {
 
 // Sets current state
 void FiniteState::Set(int newState) {
-  State = S_HALT;
+  _State = S_HALT;
   for(id=0; id<=Max; ++id)
     if ( _CurState[id] == newState ) {
-      State = newState;
+      _State = newState;
     }
   id = -1;
 }
@@ -117,7 +115,7 @@ int FiniteState::NextState() {
 
 void FiniteState::Execute() {
   // State execution cycle
-  while ( State != S_HALT && Next() != C_BREAK )
+  while ( _State != S_HALT && Next() != C_BREAK )
     if ( _CondCheck(Condition()) ) {
       // Execute required action
       _DoAction(Action());
