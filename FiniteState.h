@@ -1,6 +1,6 @@
 /*
 @file FiniteState.h
-@version 1.1
+@version 2.0
 @author Alex Palmese
 @contact alex.palmese@gmail.com
 @description

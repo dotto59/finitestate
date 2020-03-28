@@ -1,11 +1,13 @@
 /*
 @file FSMBlink.ino
-@version 1.1
+@version 2.0
 @author Alex Palmese
 @contact alex.palmese@gmail.com
 @description
 "BLINK" FINITE STATE MACHINE SAMPLE
-This basic Finite State Machine will simply flash a LED.
+This basic Finite State Machine will simply flash the 
+builtin LED for a fixed time.
+
 It has only two states: 
 * START turns the LED on and pauses for the amount of time 
 contained in the parameter, then switches to LED state

@@ -1,35 +1,28 @@
 /*
 @file FSMTest.ino
-@version 1.1
+@version 2.0
 @author Alex Palmese
 @contact alex.palmese@gmail.com
 @description
 "TEST" FINITE STATE MACHINE SAMPLE
-This Finite State Machine will let Arduino act as follows:
-
-1) At startup, all LEDs are off
-2) When button is pressed, first LED starts blinking with 200ms cycle
-3) When button is pressed again, the LED is steady
-4) When button is pressed again, first LED is turned off, and the second LED is on
-5) If button is pressed within 5 seconds, both LEDs will be on, and the machine 
-goes to a complete stop, no further actions possible.
-6) If no button is pressed, afer 5 seconds the second LED will turn off
 
 Connect two LEDs (with required 220 Ohm resistors) to pins 12 and 13, and a button to 
 pin 7 (with pull-down 1k+ resistor).
 
-Full Finite Machine State is defined in setup():
+This Finite State Machine will let Arduino act as follows:
+
+1) At startup, all LEDs are off
+2) When button is pressed, LED 1 starts blinking with 200ms cycle
+3) When button is pressed again, LED 1 is steady
+4) When button is pressed again, LED 1 is turned off, and LED 2 is on
+5) If button is pressed within 5 seconds, both LEDs will be on, and the machine 
+goes to a complete stop, no further actions possible.
+6) If no button is pressed, afer 5 seconds the second LED will turn off
+
+Full Finite Machine State is defined in setup() lines, e.g.:
 
   // State START, Event BUTTON, Action FLASH, Parameter 200, Next State FLASH
   fsm.Write(S_START, C_BUTTON, A_FLASH, 200, S_FLASH);
-  // State FLASH, Event BUTTON, Action LED_ON, Parameter 0, Next State STEADY
-  fsm.Write(S_FLASH, C_BUTTON, A_LED_ON, 0, S_STEADY);
-  // State STEADY, Event BUTTON, Action LED2_ON, Parameter 5000, Next State LED2
-  fsm.Write(S_STEADY, C_BUTTON, A_LED2_ON, 5000, S_LED2);
-  // State LED2, Event LED2_OFF, Action LED_OFF, Parameter 0, Next State START
-  fsm.Write(S_LED2, C_LED2_OFF, A_LED_OFF, 0, S_START); 
-  // State LED2, Event BUTTON, Action LED_OFF, Parameter 0, Next State HALT
-  fsm.Write(S_LED2, C_BUTTON, A_LED_OFF, 0, fsm.HALT); 
 
 Write has 5 parameters:
 1) Current state code
@@ -136,10 +129,10 @@ boolean TestCondition() {
       btn = digitalRead(BUTTON);
       if ((btn == HIGH) && (val0 == LOW)) {
         val0 = btn;
-        // Just a bit of debouncing...
+        // Just a bit of basic debouncing...
         delay(100);
         while (digitalRead(BUTTON) == HIGH)
-          delay(100);
+        delay(100);
         Serial.println("BUTTON");
         return true;
       }
