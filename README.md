@@ -61,7 +61,7 @@ boolean TestCondition(int condition) {
   return false;
 }
 ```
-In the function "DoActions" you just need to check the required action,passed by the library as its parameter, and then use it in another "switch..case" block with all the action symbols defined and what each action should perform.
+In the function "DoAction" you just need to check the required action,passed by the library as its parameter, and then use it in another "switch..case" block with all the action symbols defined and what each action should perform.
 In our example, the code will be as follows:
 ```
 void DoAction(int action) {
@@ -76,7 +76,7 @@ void DoAction(int action) {
   return;
 }
 ```
-Finally, you loop() cycle will be pretty simple and identical for almost any project using FSM:
+Finally, your loop() cycle will be pretty simple and identical for almost any project using FSM:
 ```
 void loop() {
   // State execution
