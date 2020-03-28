@@ -3,11 +3,10 @@ FiniteState machine for Arduino
 ## Definition
 This library lets you easily implement Finite State Machines (FSM) over Arduino boards.
 ## Installation
-1) Navigate to the Releases page.
-2) Download the latest release.
-3) Extract the zip file
-4) Move the "finitestate-master" folder that has been extracted to your libraries directory
-5) Rename the folder to "FiniteState"
+1) Download the code as a ZIP file from the "Clone or download" green button
+2) Extract the zip file
+3) Move the "finitestate-master" folder that has been extracted to your libraries directory
+4) Rename the folder to "FiniteState"
 ## Usage
 For a full functions reference please refer to [Library reference Wiki](https://github.com/dotto59/finitestate/wiki/Library-Reference)
 
