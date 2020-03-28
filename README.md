@@ -44,7 +44,7 @@ As you can see, Write() has 5 parameters:
 5) Next state at the end of action
 
 After this initialization, you need to create two functions: one to check the conditions or "TestCondition()", and one to perform the required actions, called "DoAction". A reference to those functions is passed to FiniteState object by calling the "SetFunctions()" method we saw before.
-The function "TestConditions()" is called back by FiniteState library passing the condition code (one of the C_* symbols) and must  return a boolean value representing the test result: true if the condition is met (so the corresponding action will be performed), or false if not. You just need to implement a "swithc..case" with all the condition symbols you have defined before.
+The function "TestConditions()" is called back by FiniteState library passing the condition code (one of the C_* symbols) and must  return a boolean value representing the test result: true if the condition is met (so the corresponding action will be performed), or false if not. You just need to implement a "switch..case" with all the condition symbols you have defined before.
 ```
 boolean TestCondition(int condition) {
   switch ( condition ) {
