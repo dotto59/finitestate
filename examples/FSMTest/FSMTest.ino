@@ -5,36 +5,22 @@
 @contact alex.palmese@gmail.com
 @description
 "TEST" FINITE STATE MACHINE SAMPLE
-
 Connect two LEDs (with required 220 Ohm resistors) to pins 12 and 13, and a button to 
 pin 7 (with pull-down 1k+ resistor).
 
 This Finite State Machine will let Arduino act as follows:
-
 1) At startup, all LEDs are off
 2) When button is pressed, LED 1 starts blinking with 200ms cycle
 3) When button is pressed again, LED 1 is steady
 4) When button is pressed again, LED 1 is turned off, and LED 2 is on
 5) If button is pressed within 5 seconds, both LEDs will be on, and the machine 
 goes to a complete stop, no further actions possible.
-6) If no button is pressed, afer 5 seconds the second LED will turn off
-
-Full Finite Machine State is defined in setup() lines, e.g.:
-
-  // State START, Event BUTTON, Action FLASH, Parameter 200, Next State FLASH
-  fsm.Write(S_START, C_BUTTON, A_FLASH, 200, S_FLASH);
-
-Write has 5 parameters:
-1) Current state code
-2) Condition required to change state
-3) Action required if Condition is met
-4) Optional integer parameter (if not used, simply put a zero)
-5) Next state at the end of action
-
+6) If no button is pressed, afer 5 seconds the second LED will turn off and start
+again at the beginning
 */
+#include <FiniteState.h>
 #include <SimpleTimer.h>
 
-#include <FiniteState.h>
 // ***********************************************
 // FINITE STATE MACHINE
 // ***********************************************
@@ -75,7 +61,6 @@ int tmrSingle = -1;
 // ***********************************************
 void setup() {  
   Serial.begin(115200);
-  delay(500);
 
   // State START, Event BUTTON, Action FLASH, Parameter 200, Next State FLASH
   fsm.Write(S_START, C_BUTTON, A_FLASH, 200, S_FLASH);
@@ -86,8 +71,11 @@ void setup() {
   // State LED2, Event LED2_OFF, Action LED_OFF, Parameter 0, Next State START
   fsm.Write(S_LED2, C_LED2_OFF, A_LED_OFF, 0, S_START); 
   // State LED2, Event BUTTON, Action LED_OFF, Parameter 0, Next State HALT
-  fsm.Write(S_LED2, C_BUTTON, A_ALL_LED_ON, 0, HALT); 
-  
+  fsm.Write(S_LED2, C_BUTTON, A_ALL_LED_ON, 0, S_HALT); 
+
+  // Set the callback functions
+  fsm.SetFunctions(&TestCondition, &DoAction);
+
   // Set the machine to first state
   fsm.Set(S_START);
   Serial.print("First state=");
@@ -101,59 +89,42 @@ void setup() {
 
 // ***********************************************
 void loop() {
-  // State execution cycle
-  while ( fsm.State != HALT && fsm.Next() != BREAK ) {
-    // Check if a condition is met
-    if ( TestCondition() ) {
-      // Execute required action
-      DoAction();
-      // Step to next state
-      fsm.SetNext();
-      Serial.print("State=");
-      Serial.println(fsm.State);
-      break;
-    }
-  }
-
-  // Any other code here
+  // State execution
+  fsm.Execute();
+  // Timers update
   DoWork();
-  
 }
 
-boolean TestCondition() {
+boolean TestCondition(int condition) {
   static int val0 = 0;
   int btn;
   
-  switch ( fsm.Condition() ) {
-    case C_BUTTON:
-      btn = digitalRead(BUTTON);
-      if ((btn == HIGH) && (val0 == LOW)) {
-        val0 = btn;
-        // Just a bit of basic debouncing...
-        delay(100);
-        while (digitalRead(BUTTON) == HIGH)
-        delay(100);
-        Serial.println("BUTTON");
-        return true;
-      }
+  switch ( condition ) {
+  case C_BUTTON:
+    btn = digitalRead(BUTTON);
+    if ((btn == HIGH) && (val0 == LOW)) {
       val0 = btn;
-      return false;
-
-    case C_LED2_OFF:
-        return (digitalRead(LED2) == LOW);
-      
+      // Just a bit of basic debouncing...
+      delay(100);
+      while (digitalRead(BUTTON) == HIGH)
+      delay(100);
+      Serial.println("BUTTON");
+      return true;
+    }
+    val0 = btn;
+    return false;
+  case C_LED2_OFF:
+      return (digitalRead(LED2) == LOW);
   }
   return false;
 }
 
-void DoAction() {
-  switch ( fsm.Action() ) {
-    
+void DoAction(int action) {
+  switch ( action ) {
     case A_LED_OFF:
       blink = 0;
       digitalWrite(LED, LOW);
       return;
-      
     case A_LED_ON:
       if ( tmrBlink != -1 ) {
         timer.deleteTimer(tmrBlink);
@@ -162,7 +133,6 @@ void DoAction() {
       digitalWrite(LED, HIGH);
       digitalWrite(LED2, LOW);
       return;
-      
     case A_FLASH:
       blink = fsm.Param();
       digitalWrite(LED, HIGH);
@@ -173,7 +143,6 @@ void DoAction() {
       }
       tmrBlink = timer.setInterval(blink, BlinkLed);
       return;
-      
     case A_LED2_ON:
       blink = fsm.Param();
       digitalWrite(LED, LOW);
@@ -186,7 +155,9 @@ void DoAction() {
       return;
     case A_ALL_LED_ON:
       digitalWrite(LED, HIGH);
-      digitalWrite(LED2, HIGH);      
+      digitalWrite(LED2, HIGH);
+      timer.disable(tmrBlink);
+      timer.disable(tmrSingle);
   }
   return;
 }

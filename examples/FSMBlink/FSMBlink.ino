@@ -13,29 +13,17 @@ It has only two states:
 contained in the parameter, then switches to LED state
 * LED turns the LED off and pauses for the amount of time 
 contained in the parameter, then switches back to START 
-
-Full Finite Machine State is defined in setup():
-
-  fsm.Write(S_START, C_TIMER, A_LED_ON, 1000, S_LED);
-  fsm.Write(S_LED, ELSE, A_LED_OFF, 1000, S_START);
-
-Write has 5 parameters:
-1) Current state code
-2) Condition required to change state
-3) Action required if Condition is met
-4) Optional integer parameter (if not used, simply put a zero)
-5) Next state at the end of action
-
 */
-
 #include <FiniteState.h>
+
 // ***********************************************
 // FINITE STATE MACHINE
 // ***********************************************
 FiniteState fsm;
-// State
+// States
 #define S_START 1
 #define S_LED 2
+#define S_PAUSE 3
 // Conditions
 #define C_TIMER 0
 // Actions
@@ -51,71 +39,55 @@ FiniteState fsm;
 // GLOBALS
 // ***********************************************
 long millis0;
+bool btnPressed = false;
+int prevState = 0;
 
 // ***********************************************
 void setup() {
   Serial.begin(115200);
-  delay(500);
+
+  pinMode(LED, OUTPUT);
 
   // State definitions
   fsm.Write(S_START, C_TIMER, A_LED_ON, 1000, S_LED);
-  fsm.Write(S_LED, ELSE, A_LED_OFF, 1000, S_START);
+  fsm.Write(S_LED, C_TIMER, A_LED_OFF, 1000, S_START);
+
+  // Set the callback functions
+  fsm.SetFunctions(&TestCondition, &DoAction);
 
   // Set the machine to first state
   fsm.Set(S_START);
-  Serial.print("First state=");
-  Serial.println(fsm.State);
-
-  pinMode(LED, OUTPUT);
-  millis0 = millis();
 }
 
 // ***********************************************
 void loop() {
-  // State execution cycle
-  while ( fsm.State != HALT && fsm.Next() != BREAK ) {
-    // Check if a condition is met
-    if ( TestCondition() ) {
-      // Execute required action
-      DoAction();
-      // Step to next state
-      fsm.SetNext();
-      Serial.print("STATE: ");
-      Serial.println(fsm.State);
-      // Exit while
-      break;
-    }
-  }
+  // State execution
+  fsm.Execute();
 }
 
-boolean TestCondition() {
-  switch ( fsm.Condition() ) {
-    case C_TIMER: // Check if timer ends
-      if ( millis() > millis0 + fsm.Param() ) {
-        // End of time, reset start time
-        millis0 = 0;
-        return true;
-      }
-      return false;
-
-    case ELSE:
+boolean TestCondition(int condition) {
+  switch ( condition ) {
+  case C_TIMER: // Check if timer ends
+    if ( millis() - millis0 > fsm.Param() ) {
+      // End of time, reset start time
+      millis0 = millis();
       return true;
-
+    }
+    return false;
+  case C_ELSE:
+    return true;
   }
   return false;
 }
 
-void DoAction() {
-  switch ( fsm.Action() ) {
-    case A_LED_OFF:
-      digitalWrite(LED, LOW);
-      delay(fsm.Param());
-      return;
-
-    case A_LED_ON:
-      digitalWrite(LED, HIGH);
-      delay(fsm.Param());
-      return;
+void DoAction(int action) {
+  switch ( action ) {
+  case A_LED_OFF:
+    digitalWrite(LED, LOW);
+    break;
+  case A_LED_ON:
+    digitalWrite(LED, HIGH);
+    break;
   }
   return;
 }

@@ -34,12 +34,18 @@ FiniteState::FiniteState() {
 void FiniteState::Reset() {
   id = -1;
   // Create first "null" record
-  Write(HALT,ELSE,NONE,0,HALT);
+  Write(S_HALT,C_ELSE,A_NONE,0,S_HALT);
   id = -1;
   Max = -1;
   // Set current state to HALT
-  Set(HALT);
-}  
+  Set(S_HALT);
+}
+
+void FiniteState::SetFunctions(bool (*condCheck)(int), void (*doAction)(int)) {
+  _CondCheck = condCheck;
+  _DoAction = doAction;
+}
+
 void FiniteState::Write(int idState, int idCond, int idAction, int idParam, int idNext) {
     ++id;
     _CurState[id] = idState;
@@ -51,7 +57,7 @@ void FiniteState::Write(int idState, int idCond, int idAction, int idParam, int 
 }
 
 // Search next current state condition. 
-// Returns BREAK if no more conditions are found
+// Returns C_BREAK if no more conditions are found
 int FiniteState::Next() {
   for (int i=++id; i<=Max; ++i)
     if ( _CurState[i] == State ) {
@@ -59,12 +65,12 @@ int FiniteState::Next() {
       return _Condition[i];
     }
   id = -1;
-  return BREAK;
+  return C_BREAK;
 }
 
 // Sets current state
 void FiniteState::Set(int newState) {
-  State = HALT;
+  State = S_HALT;
   for(id=0; id<=Max; ++id)
     if ( _CurState[id] == newState ) {
       State = newState;
@@ -82,7 +88,7 @@ int FiniteState::Condition() {
   if ( id > -1 )
       return _Condition[id];
   else
-      return BREAK;
+      return C_BREAK;
 }
 
 // Returns current state action
@@ -90,7 +96,7 @@ int FiniteState::Action() {
   if ( id > -1 )
       return _Action[id];
   else
-      return NONE;
+      return A_NONE;
 }
 
 // Returns current state interger parameter
@@ -106,5 +112,17 @@ int FiniteState::NextState() {
   if ( id > -1 )
       return _NextState[id];
   else
-      return HALT;
+      return S_HALT;
+}
+
+void FiniteState::Execute() {
+  // State execution cycle
+  while ( State != S_HALT && Next() != C_BREAK )
+    if ( _CondCheck(Condition()) ) {
+      // Execute required action
+      _DoAction(Action());
+      // Jump to next state
+      SetNext();
+      break;
+    }
 }
