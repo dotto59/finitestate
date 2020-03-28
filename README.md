@@ -9,7 +9,9 @@ This library lets you easily implement Finite State Machines (FSM) over Arduino 
 4) Move the "finitestate-master" folder that has been extracted to your libraries directory
 5) Rename the folder to "FiniteState"
 ## Usage
-First, draw your **state diagram** using circles for the states, and arcs representing the "transitions". Each transition is a combination of three items: a "**condition**" (any event or test result) an "**action**" (what to do when the event happens) and the "**next state**" (the new state after the action is done). One of the states will be the "starting" state. Don't start working without a complete and logically tested state diagram, as a good chart makes the implementation pretty straightforward instead of trial-and-error method.
+For a full functions reference please refer to [Library reference Wiki](https://github.com/dotto59/finitestate/wiki/Library-Reference)
+
+First, always draw your **state diagram** using circles for the states, and arcs representing the "transitions". Each transition is a combination of three items: a "**condition**" (any event or test result) an "**action**" (what to do when the event happens) and the "**next state**" (the new state after the action is done). One of the states will be the "starting" state. Don't start working without a complete and logically tested state diagram, as a good chart makes the implementation pretty straightforward instead of trial-and-error method.
 
 You now need just a few coding! First of all, you must define all the symbols for States, Conditions, and Actions. I suggest you to start names with "S_" for States, Conditions with "C_" and Actions with "A_", and assign then some integer values (a sequence starting from 1).
 
